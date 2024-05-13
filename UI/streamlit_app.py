@@ -8,24 +8,20 @@ import matplotlib.dates as mdates
 def get_weather_forecast(api_key):
     base_url = "http://api.openweathermap.org/data/2.5/forecast"
     params = {
-        'q': 'Lausanne,CH',  # Fixed to Lausanne, Switzerland
+        'q': 'Lausanne,CH',
         'appid': api_key,
-        'units': 'metric'  # Use 'imperial' for Fahrenheit
+        'units': 'metric'
     }
     response = requests.get(base_url, params=params)
     return response.json()
 
 
-# API Key
 API_KEY = '8980b87bb33cc5c550a8cae48557b6af'
 
-# Streamlit title
 st.title('Home Monitoring')
 
-# Get weather forecast
 forecast_data = get_weather_forecast(API_KEY)
 
-# Extract relevant data
 current_weather = forecast_data['list'][0]
 current_temp = current_weather['main']['temp']
 current_desc = current_weather['weather'][0]['description']
@@ -47,7 +43,9 @@ with col1:
         st.markdown(f"## {current_humidity} %")
     col7, col8 = st.columns([1, 3])
     with col7:
-        st.image("https://p7.hiclipart.com/preview/917/595/765/weather-forecasting-wind-computer-icons-clip-art-wind.jpg", width=70)
+        st.image(
+            "https://p7.hiclipart.com/preview/917/595/765/weather-forecasting-wind-computer-icons-clip-art-wind.jpg",
+            width=70)
     with col8:
         st.markdown(f"## {current_wind_speed} %")
 
@@ -67,9 +65,6 @@ with col2:
             st.write(f"### {date}")
             st.image(icon_url, width=70)
             st.write(f"{temp_min}°C - {temp_max}°C")
-
-
-
 
 if st.button('Show More Detailed Weather Forecast'):
     if forecast_data.get('cod') == '200':
@@ -91,7 +86,6 @@ if st.button('Show More Detailed Weather Forecast'):
                 icons = []
                 num_forecasts = len(forecasts)
                 cols = st.columns(num_forecasts)
-                # Collect data for plotting and displaying
                 for i, forecast in enumerate(forecasts):
                     with cols[i]:
                         time = datetime.fromtimestamp(forecast['dt'])
@@ -111,7 +105,6 @@ if st.button('Show More Detailed Weather Forecast'):
 
                         st.image(icon_url, width=70)
 
-                # Plotting the temperature graph
                 fig, ax = plt.subplots(figsize=(10, 4))
                 ax.plot(times, temps, marker='o', linestyle='-', color='blue', alpha=0.6, markerfacecolor='red')
                 ax.set_xlabel('Time')
@@ -125,7 +118,6 @@ if st.button('Show More Detailed Weather Forecast'):
     else:
         st.error("API error. Please check the API key or try again later.")
 
-    # Create plot
     fig2, ax2 = plt.subplots(figsize=(10, 4))
     ax2.plot(all_dates, all_temps, linestyle='-', color='blue', alpha=0.6, markerfacecolor='red')
     ax2.set_ylabel('Temperature (°C)')
@@ -134,5 +126,4 @@ if st.button('Show More Detailed Weather Forecast'):
     plt.xticks(rotation=45)
     plt.tight_layout()
 
-    # Show plot
     st.pyplot(fig2)
