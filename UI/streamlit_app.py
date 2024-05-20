@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-
-
-
 def get_data_from_flask(url_path):
     URL = "http://127.0.0.1:8080/" + url_path
     response = requests.get(URL)

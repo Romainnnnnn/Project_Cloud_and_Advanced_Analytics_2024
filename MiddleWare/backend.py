@@ -2,7 +2,6 @@ from flask import Flask
 from google.cloud import bigquery
 import os
 from flask import jsonify
-import pandas as pd
 from google.cloud.exceptions import GoogleCloudError
 import requests
 
