@@ -6,7 +6,7 @@ import matplotlib.dates as mdates
 
 
 def get_weather_forecast(api_key):
-    base_url = "http://api.openweathermap.org/data/2.5/forecast"
+    base_url = "https://api.openweathermap.org/data/2.5/forecast"
     params = {
         'q': 'Lausanne,CH',
         'appid': api_key,
@@ -58,7 +58,7 @@ with col2:
         temp_min = day['main']['temp_min']
         temp_max = day['main']['temp_max']
         desc = day['weather'][0]['description']
-        icon_url = f"http://openweathermap.org/img/wn/{day['weather'][0]['icon']}@2x.png"
+        icon_url = f"https://openweathermap.org/img/wn/{day['weather'][0]['icon']}@2x.png"
 
         col = columns[idx % 2]
         with col:
@@ -91,7 +91,7 @@ if st.button('Show More Detailed Weather Forecast'):
                         time = datetime.fromtimestamp(forecast['dt'])
                         temp = forecast['main']['temp']
                         description = forecast['weather'][0]['description'].capitalize()
-                        icon_url = f"http://openweathermap.org/img/wn/{forecast['weather'][0]['icon']}@2x.png"
+                        icon_url = f"https://openweathermap.org/img/wn/{forecast['weather'][0]['icon']}@2x.png"
 
                         times.append(time)
                         temps.append(temp)
@@ -115,15 +115,15 @@ if st.button('Show More Detailed Weather Forecast'):
                 plt.tight_layout()
 
                 st.pyplot(fig)
+
+        fig2, ax2 = plt.subplots(figsize=(10, 4))
+        ax2.plot(all_dates, all_temps, linestyle='-', color='blue', alpha=0.6, markerfacecolor='red')
+        ax2.set_ylabel('Temperature (°C)')
+        ax2.set_title('Temperature Variation')
+        ax2.xaxis.set_major_formatter(mdates.DateFormatter('%A'))
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        st.pyplot(fig2)
     else:
         st.error("API error. Please check the API key or try again later.")
-
-    fig2, ax2 = plt.subplots(figsize=(10, 4))
-    ax2.plot(all_dates, all_temps, linestyle='-', color='blue', alpha=0.6, markerfacecolor='red')
-    ax2.set_ylabel('Temperature (°C)')
-    ax2.set_title('Temperature Variation')
-    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%A'))
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    st.pyplot(fig2)
