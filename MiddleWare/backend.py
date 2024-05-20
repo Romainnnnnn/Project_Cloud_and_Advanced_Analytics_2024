@@ -4,13 +4,25 @@ import os
 from flask import jsonify
 import pandas as pd
 from google.cloud.exceptions import GoogleCloudError
+import requests
+
 
 PROJECT_NAME = "cloud-project-423208"
 key_path = 'MiddleWare/cloud-project-423208-7825c93be1d3.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
 
 client = bigquery.Client(project=PROJECT_NAME)
+API_KEY = '8980b87bb33cc5c550a8cae48557b6af'
 
+def get_weather_forecast(api_key):
+    base_url = "https://api.openweathermap.org/data/2.5/forecast"
+    params = {
+        'q': 'Lausanne,CH',
+        'appid': api_key,
+        'units': 'metric'
+    }
+    response = requests.get(base_url, params=params)
+    return response.json()
 
 app = Flask(__name__)
 
@@ -98,6 +110,12 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
             "status": "error",
             "message": str(e)
         }), 500
+    
+
+@app.route('/forecast')
+def forecast():
+    forecast_data = get_weather_forecast(API_KEY)
+    return jsonify(forecast_data)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8080)

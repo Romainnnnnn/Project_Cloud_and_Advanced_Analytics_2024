@@ -5,22 +5,19 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-def get_weather_forecast(api_key):
-    base_url = "https://api.openweathermap.org/data/2.5/forecast"
-    params = {
-        'q': 'Lausanne,CH',
-        'appid': api_key,
-        'units': 'metric'
-    }
-    response = requests.get(base_url, params=params)
+
+
+
+def get_data_from_flask(url_path):
+    URL = "http://127.0.0.1:8080/" + url_path
+    response = requests.get(URL)
     return response.json()
-
-
-API_KEY = '8980b87bb33cc5c550a8cae48557b6af'
 
 st.title('Home Monitoring')
 
-forecast_data = get_weather_forecast(API_KEY)
+
+
+forecast_data = get_data_from_flask('forecast')
 
 current_weather = forecast_data['list'][0]
 current_temp = current_weather['main']['temp']
