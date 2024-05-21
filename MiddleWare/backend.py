@@ -4,19 +4,23 @@ import os
 from flask import jsonify
 from google.cloud.exceptions import GoogleCloudError
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-PROJECT_NAME = "cloud-project-423208"
-key_path = 'MiddleWare/cloud-project-423208-7825c93be1d3.json'
+PROJECT_NAME = os.getenv('PROJECT_NAME')
+key_path = os.getenv('KEY_PASS')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
 
 client = bigquery.Client(project=PROJECT_NAME)
-API_KEY = '8980b87bb33cc5c550a8cae48557b6af'
+API_KEY = os.getenv('API_KEY')
+LOCATION = os.getenv('LOCATION') # 'Lausanne,CH'
 
-def get_weather_forecast(api_key):
+def get_weather_forecast(api_key, location):
     base_url = "https://api.openweathermap.org/data/2.5/forecast"
     params = {
-        'q': 'Lausanne,CH',
+        'q': location,
         'appid': api_key,
         'units': 'metric'
     }
@@ -115,8 +119,9 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
 
 @app.route('/forecast')
 def forecast():
-    forecast_data = get_weather_forecast(API_KEY)
+    forecast_data = get_weather_forecast(API_KEY, LOCATION)
     return jsonify(forecast_data)
+
 
 @app.route('/get_icon/<forecast>')
 def get_icon(forecast):
