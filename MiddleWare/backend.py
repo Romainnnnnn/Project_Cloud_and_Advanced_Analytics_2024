@@ -80,9 +80,10 @@ def get_dates():
 
 # http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25
 
-@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>', methods=['GET'])
+@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>')
 def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed):
     try:
+        print("Received data")
         # Convert data types as needed
         indoor_temp = float(indoor_temp)
         indoor_humidity = float(indoor_humidity)
