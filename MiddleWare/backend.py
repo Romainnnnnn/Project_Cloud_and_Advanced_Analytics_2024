@@ -1,7 +1,6 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from google.cloud import bigquery
 import os
-from flask import jsonify
 from google.cloud.exceptions import GoogleCloudError
 import requests
 from dotenv import load_dotenv
@@ -81,32 +80,26 @@ def get_dates():
 
 # http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25
 
-@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_weather>/<outdoor_windspeed>')
-def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_weather, outdoor_windspeed):
+@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>', methods=['GET'])
+def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed):
     try:
+        # Convert data types as needed
         indoor_temp = float(indoor_temp)
         indoor_humidity = float(indoor_humidity)
         outdoor_temp = float(outdoor_temp)
         outdoor_humidity = float(outdoor_humidity)
         outdoor_windspeed = float(outdoor_windspeed)
 
-        query = """
-                INSERT INTO `{0}.WheatherData.weather-records` (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed)
-                VALUES(@date, @time, @indoor_temp, @indoor_humidity, @outdoor_temp, @outdoor_humidity, @outdoor_wheather, @outdoor_windspeed)
-                """.format(PROJECT_NAME)
-        query_params = [
-            bigquery.ScalarQueryParameter('date', 'DATE', date),
-            bigquery.ScalarQueryParameter('time', 'TIME', time),
-            bigquery.ScalarQueryParameter('indoor_temp', 'FLOAT', indoor_temp),
-            bigquery.ScalarQueryParameter('indoor_humidity', 'FLOAT', indoor_humidity),
-            bigquery.ScalarQueryParameter('outdoor_temp', 'FLOAT', outdoor_temp),
-            bigquery.ScalarQueryParameter('outdoor_humidity', 'FLOAT', outdoor_humidity),
-            bigquery.ScalarQueryParameter('outdoor_wheather', 'STRING', outdoor_weather),
-            bigquery.ScalarQueryParameter('outdoor_windspeed', 'FLOAT', outdoor_windspeed)
-        ]
-        job_config = bigquery.QueryJobConfig(query_parameters=query_params)
-        query_job = client.query(query, job_config=job_config)
-        query_job.result() 
+        # Construct the BigQuery SQL query
+        query = f"""
+            INSERT INTO `{PROJECT_NAME}.WheatherData.weather-records` 
+            (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed)
+            VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed})
+        """
+
+        # Run the BigQuery query
+        query_job = client.query(query)
+        query_job.result()
 
         return jsonify('Data added successfully'), 200
     except Exception as e:
