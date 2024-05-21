@@ -21,7 +21,7 @@ current_temp = current_weather['main']['temp']
 current_desc = current_weather['weather'][0]['description']
 current_humidity = current_weather['main']['humidity']
 current_wind_speed = current_weather['wind']['speed']
-icon_url = f"https://openweathermap.org/img/wn/{current_weather['weather'][0]['icon']}@2x.png"
+icon_url = get_data_from_flask(f'get_icon/{current_weather["weather"][0]["icon"]}')
 col1, col2 = st.columns(2)
 with col1:
     st.markdown("## Live")
@@ -52,7 +52,7 @@ with col2:
         temp_min = day['main']['temp_min']
         temp_max = day['main']['temp_max']
         desc = day['weather'][0]['description']
-        icon_url = f"https://openweathermap.org/img/wn/{day['weather'][0]['icon']}@2x.png"
+        icon_url = get_data_from_flask(f'get_icon/{day["weather"][0]["icon"]}')
 
         col = columns[idx % 2]
         with col:
@@ -85,7 +85,7 @@ if st.button('Show More Detailed Weather Forecast'):
                         time = datetime.fromtimestamp(forecast['dt'])
                         temp = forecast['main']['temp']
                         description = forecast['weather'][0]['description'].capitalize()
-                        icon_url = f"https://openweathermap.org/img/wn/{forecast['weather'][0]['icon']}@2x.png"
+                        icon_url = get_data_from_flask(f'get_icon/{forecast["weather"][0]["icon"]}')
 
                         times.append(time)
                         temps.append(temp)

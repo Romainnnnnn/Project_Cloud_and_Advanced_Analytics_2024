@@ -49,6 +49,8 @@ def index():
     '''
     return endpoints
 
+
+
 @app.route('/dates')
 def get_dates():
     try:
@@ -115,6 +117,13 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
 def forecast():
     forecast_data = get_weather_forecast(API_KEY)
     return jsonify(forecast_data)
+
+@app.route('/get_icon/<forecast>')
+def get_icon(forecast):
+    base_url = "https://openweathermap.org/img/wn"
+    icon_url = f"{forecast}"
+    end_url = '@2x.png'
+    return jsonify(f"{base_url}/{icon_url}{end_url}")
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8080)
