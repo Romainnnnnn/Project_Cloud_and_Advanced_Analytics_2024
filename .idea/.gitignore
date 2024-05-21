@@ -7,3 +7,4 @@ workspace.xml
 /dataSources/
 /dataSources.local.xml
 config.env
+../Middleware/.env
