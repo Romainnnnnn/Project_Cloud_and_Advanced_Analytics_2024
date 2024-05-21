@@ -70,7 +70,7 @@ def get_dates():
     except Exception as e:
         return jsonify({
             "status": "error",
-            "message": "An unexpected error occurred"
+            "message": str(e)
         }), 500
 
 # http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25
