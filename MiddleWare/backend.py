@@ -176,7 +176,10 @@ def get_icon(forecast):
     base_url = "https://openweathermap.org/img/wn"
     icon_url = f"{forecast}"
     end_url = '@2x.png'
+    print(f"{base_url}/{icon_url}{end_url}")
     return jsonify(f"{base_url}/{icon_url}{end_url}")
+
+    
 
 @app.route('/time')
 def time_date():
