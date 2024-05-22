@@ -119,6 +119,7 @@ def forecast():
 
 @app.route('/outdoor_temp')
 def outdoor_temp():
+    print("got request")
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_temp = current_weather['main']['temp']
@@ -126,10 +127,27 @@ def outdoor_temp():
 
 @app.route('/outdoor_humidity')
 def outdoor_humidity():
+    print("got request")
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_humidity = current_weather['main']['humidity']
     return jsonify(current_humidity)
+
+@app.route('/outdoor_windspeed')
+def outdoor_windspeed():
+    print("got request")
+    forecast_data = get_weather_forecast(API_KEY, LOCATION)
+    current_weather = forecast_data['list'][0]
+    current_wind_speed = current_weather['wind']['speed']
+    return jsonify(current_wind_speed)
+
+@app.route('/outdoor_weather') 
+def outdoor_weather():
+    print("got request")
+    forecast_data = get_weather_forecast(API_KEY, LOCATION)
+    current_weather = forecast_data['list'][0]
+    current_weather = current_weather['weather'][0]['description']
+    return jsonify(current_weather)
 
 
 @app.route('/get_icon/<forecast>')
@@ -138,6 +156,21 @@ def get_icon(forecast):
     icon_url = f"{forecast}"
     end_url = '@2x.png'
     return jsonify(f"{base_url}/{icon_url}{end_url}")
+
+@app.route('/time')
+def time_date():
+    from datetime import datetime
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    return jsonify(current_time)
+
+@app.route('/date')
+def date(): 
+    from datetime import datetime
+    now = datetime.now()
+    current_date = now.strftime("%Y-%m-%d")
+    return jsonify(current_date)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8080)
