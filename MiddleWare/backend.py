@@ -149,6 +149,32 @@ def outdoor_weather():
     current_weather = current_weather['weather'][0]['description']
     return jsonify(current_weather)
 
+@app.route('/last_record')
+def last_record():
+    try:
+        query = f"""
+                SELECT *
+                FROM `{PROJECT_NAME}.WheatherData.weather-records`
+                ORDER BY date DESC, time DESC
+                LIMIT 1
+                """
+        query_job = client.query(query)
+        results = query_job.to_dataframe()
+        return jsonify({
+            "status": "success",
+            "data": results.to_json()
+        }), 200
+    except GoogleCloudError as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
 
 @app.route('/get_icon/<forecast>')
 def get_icon(forecast):
