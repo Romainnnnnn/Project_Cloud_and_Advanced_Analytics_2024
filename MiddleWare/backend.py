@@ -78,10 +78,10 @@ def get_dates():
             "message": str(e)
         }), 500
 
-# http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25
+# http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25/25/25
 
-@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>')
-def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed):
+@app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>/<detector_status>/<indoor_co2>')
+def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2):
     try:
         print("Received data")
         # Convert data types as needed
@@ -90,12 +90,13 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
         outdoor_temp = float(outdoor_temp)
         outdoor_humidity = float(outdoor_humidity)
         outdoor_windspeed = float(outdoor_windspeed)
+        indoor_co2 = float(indoor_co2)
 
         # Construct the BigQuery SQL query
         query = f"""
             INSERT INTO `{PROJECT_NAME}.WheatherData.weather-records` 
-            (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed)
-            VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed})
+            (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2)
+            VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed}, '{detector_status}', {indoor_co2})
         """
 
         # Run the BigQuery query
@@ -115,6 +116,20 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
 def forecast():
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     return jsonify(forecast_data)
+
+@app.route('/outdoor_temp')
+def outdoor_temp():
+    forecast_data = get_weather_forecast(API_KEY, LOCATION)
+    current_weather = forecast_data['list'][0]
+    current_temp = current_weather['main']['temp']
+    return jsonify(current_temp)
+
+@app.route('/outdoor_humidity')
+def outdoor_humidity():
+    forecast_data = get_weather_forecast(API_KEY, LOCATION)
+    current_weather = forecast_data['list'][0]
+    current_humidity = current_weather['main']['humidity']
+    return jsonify(current_humidity)
 
 
 @app.route('/get_icon/<forecast>')
