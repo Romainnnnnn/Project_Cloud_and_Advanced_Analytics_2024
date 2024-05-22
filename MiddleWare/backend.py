@@ -78,8 +78,6 @@ def get_dates():
             "message": str(e)
         }), 500
 
-# http://127.0.0.1:8080/post/2024-04-20/16:02:23/25/25/25/25/sunny/25/25/25
-
 @app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>/<detector_status>/<indoor_co2>')
 def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2):
     try:
@@ -92,14 +90,11 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
         outdoor_windspeed = float(outdoor_windspeed)
         indoor_co2 = float(indoor_co2)
 
-        # Construct the BigQuery SQL query
         query = f"""
             INSERT INTO `{PROJECT_NAME}.WheatherData.weather-records` 
             (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2)
             VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed}, '{detector_status}', {indoor_co2})
         """
-
-        # Run the BigQuery query
         query_job = client.query(query)
         query_job.result()
 
