@@ -9,7 +9,7 @@ def save_to_env(var_names, var_values):
 
 # Streamlit app layout
 def main():
-    st.title('Environment Variables Setup')
+    st.title('Backend Environement Setup')
 
     st.write("##### API Key")
     st.write("Please enter your OpenWeatherMap API key. This is required for authentication with external services.")
@@ -20,11 +20,11 @@ def main():
     st.write("The project name of your Google Cloud project. This is required for authentication with Google Cloud services.")
     project_name = st.text_input("Enter Project Name", key='PROJECT_NAME')
 
-    st.write("##### Key Passphrase")
+    st.write("##### Key Path")
     st.write("This key is your Google Cloud service account key. This is required for authentication with Google Cloud services")
-    key_path = st.text_input("Enter Key Passphrase", key='KEY_PATH')
+    key_path = st.text_input("Enter Key Path", key='KEY_PATH')
 
-    st.write("##### Location")
+    st.write("##### Location Setting (format: Lausanne,CH)")
     st.write("Please specify the deployment location. This will help configure regional settings.")
     location = st.text_input("Enter Location", key='LOCATION')
 
@@ -38,7 +38,11 @@ def main():
     # Save button
     if st.button('Save to .env'):
         save_to_env(var_names, var_values)
-        st.success('Environment variables saved successfully! Copy .env file to Middleware folder')
+        st.success('Environment variables saved successfully!')
+        st.write('##### Copy the .env file to the backend folder to use the updated configuration.')
+
+    if st.button('Next Page'):
+        st.switch_page('pages/uiflow.py')
 
 if __name__ == "__main__":
     main()
