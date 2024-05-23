@@ -103,8 +103,9 @@ with col2:
 
 
 st.markdown("***")
-
-st.dataframe(df)
+col1, col2, col3 = st.columns([1, 7, 1])
+with col2:
+    st.dataframe(df)
 
 # FOOTER
 
