@@ -84,19 +84,22 @@ with col3:
 
 st.markdown("***")
 
-st.subheader("Outdoor Conditions Over Time")
-fig2, ax2 = plt.subplots()
-ax2.plot(df['date_time'], df['outdoor_temp'], label='Outdoor Temp (°C)', color='orange')
-ax2.set_xlabel('Time')
-ax2.set_ylabel('Temperature (°C)')
-interval = len(df) // 7
-ax2.set_xticks(df['date_time'][::interval])
-ax2.set_xticklabels(df['date_time'][::interval], rotation=45)
-ax2.legend()
-plt.xticks(rotation=45)
-plt.tight_layout()
+col1, col2, col3 = st.columns([1, 2, 1])
 
-st.pyplot(fig2)
+with col2:
+    st.subheader("Outdoor Conditions Over Time")
+    fig2, ax2 = plt.subplots()
+    ax2.plot(df['date_time'], df['outdoor_temp'], label='Outdoor Temp (°C)', color='orange')
+    ax2.set_xlabel('Time')
+    ax2.set_ylabel('Temperature (°C)')
+    interval = len(df) // 7
+    ax2.set_xticks(df['date_time'][::interval])
+    ax2.set_xticklabels(df['date_time'][::interval], rotation=45)
+    ax2.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    st.pyplot(fig2)
 
 
 st.markdown("***")
