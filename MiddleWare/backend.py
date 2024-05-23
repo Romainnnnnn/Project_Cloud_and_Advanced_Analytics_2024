@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 PROJECT_NAME = os.getenv('PROJECT_NAME')
 key_path = os.getenv('KEY_PATH')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path

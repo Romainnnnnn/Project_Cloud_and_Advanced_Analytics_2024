@@ -12,11 +12,11 @@ def get_data_from_flask(url_path):
 
 st.title('Home Monitoring')
 
+if 'forecast' not in st.session_state:
+    st.session_state['forecast'] = get_data_from_flask('forecast')  
 
 
-forecast_data = get_data_from_flask('forecast')
-
-current_weather = forecast_data['list'][0]
+current_weather = st.session_state['forecast']['list'][0]
 current_temp = current_weather['main']['temp']
 current_desc = current_weather['weather'][0]['description']
 current_humidity = current_weather['main']['humidity']
@@ -43,7 +43,7 @@ with col1:
     with col8:
         st.markdown(f"## {current_wind_speed} %")
 
-days = forecast_data['list'][::8]
+days = st.session_state['forecast']['list'][::8]
 with col2:
     st.markdown("### Forecast")
     columns = st.columns(2)
@@ -61,11 +61,11 @@ with col2:
             st.write(f"{temp_min}°C - {temp_max}°C")
 
 if st.button('Show More Detailed Weather Forecast'):
-    if forecast_data.get('cod') == '200':
+    if st.session_state['forecast'].get('cod') == '200':
         st.subheader(f"Weather Forecast for Lausanne")
 
         daily_forecasts = {}
-        for entry in forecast_data['list']:
+        for entry in st.session_state['forecast']['list']:
             date = datetime.fromtimestamp(entry['dt']).date()
             if date not in daily_forecasts:
                 daily_forecasts[date] = []
