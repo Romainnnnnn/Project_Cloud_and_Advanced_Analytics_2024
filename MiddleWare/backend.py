@@ -45,6 +45,7 @@ def index():
         <li>/time</li>
         <li>/date</li>
         <li>/all_records</li>
+        <li>/text_to_speech</li>
     </ul>
     '''
     return endpoints
