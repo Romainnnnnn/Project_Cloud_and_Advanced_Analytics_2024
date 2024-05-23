@@ -25,18 +25,29 @@ indoor_co2 = data['indoor_co2']['0']
 
 st.title("Indoor Conditions Monitoring")
 
-st.header("Date and Time")
-st.write(f"**Date:** {date}")
-st.write(f"**Time:** {time}")
+st.markdown("***")
 
-st.header("Indoor Temperature")
-st.metric(label="Temperature (°C)", value=f"{indoor_temp}°C")
 
-st.header("Indoor Humidity")
-st.metric(label="Humidity (%)", value=f"{indoor_humidity}%")
+st.write(f"**Recorded at:** {time} on {date}")
 
-st.header("Indoor CO2 Levels")
-st.metric(label="CO2 (ppm)", value=f"{indoor_co2} ppm")
+st.markdown("***")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.header("Indoor Temperature")
+    st.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfED-3BLG4QiOVM3kueDC9eYhUTI9aN7XM9A&s", width=70)
+    st.metric(label="Temperature (°C)", value=f"{indoor_temp}°C")
+
+with col2:
+    st.header("Indoor Humidity")
+    st.image("https://cdn-icons-png.flaticon.com/512/4148/4148460.png", width=70)
+    st.metric(label="Humidity (%)", value=f"{indoor_humidity}%")
+
+with col3:
+    st.header("Indoor CO2 Levels")
+    st.image("https://icons.veryicon.com/png/o/education-technology/agricultural-facilities/co2.png", width=70)
+    st.metric(label="CO2 (ppm)", value=f"{indoor_co2} ppm")
 
 st.markdown("""
     <style>
