@@ -27,7 +27,6 @@ st.title("Indoor Conditions Monitoring")
 
 st.markdown("***")
 
-
 st.write(f"**Recorded at:** {time} on {date}")
 
 st.markdown("***")

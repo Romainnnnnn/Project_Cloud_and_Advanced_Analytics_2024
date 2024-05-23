@@ -162,6 +162,25 @@ def last_record():
             "status": "error",
             "message": str(e)
         }), 500
+    
+
+@app.route('/all_records')
+def all_records():
+    try:
+        query = f"""
+                SELECT *
+                FROM `{PROJECT_NAME}.WheatherData.weather-records`
+                """
+        query_job = client.query(query)
+        results = query_job.to_dataframe()
+        return results.to_json()
+
+    except GoogleCloudError as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
 
 
 if __name__ == '__main__':
