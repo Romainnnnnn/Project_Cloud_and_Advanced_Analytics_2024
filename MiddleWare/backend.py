@@ -31,51 +31,21 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     endpoints = '''
-    <html>
-    <head>
-        <style>
-            .endpoint {
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-                margin-bottom: 10px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="endpoint">Available endpoints:</div>
-        <ul>
-            <li><a href="/movie_title">/movie_title</a></li>
-        </ul>
-    </body>
-    </html>
+    <h1>Endpoints</h1>
+    <ul>
+        <li>/post/&lt;date&gt;/&lt;time&gt;/&lt;indoor_temp&gt;/&lt;indoor_humidity&gt;/&lt;outdoor_temp&gt;/&lt;outdoor_humidity&gt;/&lt;outdoor_wheather&gt;/&lt;outdoor_windspeed&gt;/&lt;detector_status&gt;/&lt;indoor_co2&gt;</li>
+        <li>/forecast</li>
+        <li>/outdoor_temp</li>
+        <li>/outdoor_humidity</li>
+        <li>/outdoor_windspeed</li>
+        <li>/outdoor_weather</li>
+        <li>/last_record</li>
+        <li>/time</li>
+        <li>/date</li>
+    </ul>
     '''
     return endpoints
 
-
-
-@app.route('/dates')
-def get_dates():
-    try:
-        query = f"""
-                SELECT *
-                FROM `{PROJECT_NAME}.WheatherData.weather-records`
-                """
-        query_job = client.query(query)
-        results = query_job.to_dataframe()
-        return jsonify({
-            "status": "success",
-            "data": results.to_json()
-        }), 200
-    except GoogleCloudError as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
 
 @app.route('/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather>/<outdoor_windspeed>/<detector_status>/<indoor_co2>')
 def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2):
@@ -141,7 +111,31 @@ def outdoor_weather():
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_weather = current_weather['weather'][0]['description']
-    return jsonify(current_weather)
+    return jsonify(current_weather)                           
+
+@app.route('/get_icon/<forecast>')
+def get_icon(forecast):
+    base_url = "https://openweathermap.org/img/wn"
+    icon_url = f"{forecast}"
+    end_url = '@2x.png'
+    print(f"{base_url}/{icon_url}{end_url}")
+    return jsonify(f"{base_url}/{icon_url}{end_url}")
+
+    
+
+@app.route('/time')
+def time_date():
+    from datetime import datetime
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    return jsonify(current_time)
+
+@app.route('/date')
+def date(): 
+    from datetime import datetime
+    now = datetime.now()
+    current_date = now.strftime("%Y-%m-%d")
+    return jsonify(current_date)
 
 @app.route('/last_record')
 def last_record():
@@ -168,31 +162,6 @@ def last_record():
             "status": "error",
             "message": str(e)
         }), 500
-
-
-@app.route('/get_icon/<forecast>')
-def get_icon(forecast):
-    base_url = "https://openweathermap.org/img/wn"
-    icon_url = f"{forecast}"
-    end_url = '@2x.png'
-    print(f"{base_url}/{icon_url}{end_url}")
-    return jsonify(f"{base_url}/{icon_url}{end_url}")
-
-    
-
-@app.route('/time')
-def time_date():
-    from datetime import datetime
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    return jsonify(current_time)
-
-@app.route('/date')
-def date(): 
-    from datetime import datetime
-    now = datetime.now()
-    current_date = now.strftime("%Y-%m-%d")
-    return jsonify(current_date)
 
 
 if __name__ == '__main__':
