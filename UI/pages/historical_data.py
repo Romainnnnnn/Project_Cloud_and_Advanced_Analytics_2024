@@ -4,6 +4,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+st.set_page_config(
+    page_title="Historical Data",
+    page_icon="🌎",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'About': " [GitHub](https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024)"
+    }
+)
+
 def get_data_from_flask(url_path):
     URL = "http://127.0.0.1:8080/" + url_path
     response = requests.get(URL)
