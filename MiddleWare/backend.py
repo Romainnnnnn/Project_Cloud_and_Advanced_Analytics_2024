@@ -201,9 +201,9 @@ def text_to_speech():
         input=synthesis_input, voice=voice, audio_config=audio_config
     )
 
-    with open("output.mp3", "wb") as out:
-        out.write(response.audio_content)
-        print('Audio content written to file "output.mp3"')
+    with open("output.vaw", "wb") as out:
+         out.write(response.audio_content)
+         print('Audio content written to file "output.mp3"')
 
     return response.audio_content
 
