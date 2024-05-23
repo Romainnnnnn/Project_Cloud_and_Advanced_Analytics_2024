@@ -42,6 +42,7 @@ def index():
         <li>/last_record</li>
         <li>/time</li>
         <li>/date</li>
+        <li>/all_records</li>
     </ul>
     '''
     return endpoints
