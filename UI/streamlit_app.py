@@ -18,10 +18,10 @@ st.set_page_config(
 
 show_pages(
     [
-        Page("streamlit_app.py", "Home", "🏠"),
-        Page("pages/home_monitoring.py", "Home Monitoring", "🌎"),
-        Page("pages/historical_data.py", "Historical Data", "🏠"),
-        Page("pages/weather_forecast.py", "Home Monitoring", "🌤️"),
+        Page("streamlit_app.py", "Welcome", "🏠"),
+        Page("pages/home_monitoring.py", "Home Monitoring", "🏠"),
+        Page("pages/historical_data.py", "Historical Data", "🌎"),
+        Page("pages/weather_forecast.py", "Forecast", "🌤️"),
     ]
 )
 # Function to get data from Flask
@@ -63,19 +63,19 @@ col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Historical Data'):
+    if st.button('View Historical Data  🌎'):
         st.switch_page('pages/historical_data.py') 
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Forecast'):
+    if st.button('View Forecast  🌤️'):
         st.switch_page('pages/weather_forecast.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('Home Monitoring'):
+    if st.button('Home Monitoring  🏠'):
         st.switch_page('pages/home_monitoring.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
