@@ -3,18 +3,27 @@ import requests
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from st_pages import Page, show_pages, add_page_title
 
 # Page configuration
 st.set_page_config(
     page_title="Home Monitoring App",
     page_icon="🏠",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
     menu_items={
         'About': "[GitHub](https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024)"
     }
 )
 
+show_pages(
+    [
+        Page("streamlit_app.py", "Home", "🏠"),
+        Page("pages/home_monitoring.py", "Home Monitoring", "🌎"),
+        Page("pages/historical_data.py", "Historical Data", "🏠"),
+        Page("pages/weather_forecast.py", "Home Monitoring", "🌤️"),
+    ]
+)
 # Function to get data from Flask
 def get_data_from_flask(url_path):
     URL = "http://127.0.0.1:8080/" + url_path
