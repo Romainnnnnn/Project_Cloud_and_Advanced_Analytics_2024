@@ -4,6 +4,7 @@ import os
 from google.cloud.exceptions import GoogleCloudError
 import requests
 from dotenv import load_dotenv
+from google.cloud import texttospeech
 
 load_dotenv()
 
@@ -12,6 +13,7 @@ key_path = os.getenv('KEY_PATH')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
 
 client = bigquery.Client(project=PROJECT_NAME)
+client_2 = texttospeech.TextToSpeechClient()
 API_KEY = os.getenv('API_KEY')
 LOCATION = os.getenv('LOCATION') # 'Lausanne,CH'
 
@@ -123,7 +125,6 @@ def get_icon(forecast):
     return jsonify(f"{base_url}/{icon_url}{end_url}")
 
     
-
 @app.route('/time')
 def time_date():
     from datetime import datetime
@@ -181,6 +182,30 @@ def all_records():
             "status": "error",
             "message": str(e)
         }), 500
+    
+
+@app.route('/text_to_speech')
+def text_to_speech():
+    synthesis_input = texttospeech.SynthesisInput(text="Hello, World!")
+
+    voice = texttospeech.VoiceSelectionParams(
+        language_code="en-US", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+        )
+
+    audio_config = texttospeech.AudioConfig(
+        audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+
+    response = client_2.synthesize_speech(
+        input=synthesis_input, voice=voice, audio_config=audio_config
+    )
+
+    with open("output.mp3", "wb") as out:
+        out.write(response.audio_content)
+        print('Audio content written to file "output.mp3"')
+
+    return response.audio_content
+
 
 
 
