@@ -1,0 +1,152 @@
+from m5stack import *
+from m5stack_ui import * # type: ignore
+from uiflow import * # type: ignore
+import ntptime # type: ignore
+import urequests  # type: ignore
+import unit  # type: ignore
+import utime  # type: ignore
+import network  # type: ignore
+import ure  # type: ignore
+import urllib.parse
+
+
+
+WIFI_SSID = 'Yes'
+WIFI_PASSWORD = '123456789'
+
+running = True
+backend_url = 'http://192.168.50.203:8080/'
+
+def connect_to_wifi():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+
+    lcd.print('Connecting to WiFi.', 0, 80, 0xff0000)  # type: ignore
+    while not wlan.isconnected():
+      pass
+    
+    lcd.print('\b WiFi connected:', 0, 80, 0xff0000)  # type: ignore
+    screen.clean_screen()
+    screen.set_screen_bg_color(0xADD8E6)
+
+
+
+def url_encode(value):
+    return ure.sub(r'[^A-Za-z0-9]', lambda x: '%%%02X' % ord(x.group(0)), str(value))
+
+def post_data(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_weather, outdoor_windspeed, detector_status, indoor_co2):
+    url = "{}post/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}".format(
+        backend_url,
+        url_encode(date),
+        url_encode(time),
+        url_encode(indoor_temp),
+        url_encode(indoor_humidity),
+        url_encode(outdoor_temp),
+        url_encode(outdoor_humidity),
+        url_encode(outdoor_weather),
+        url_encode(outdoor_windspeed),
+        url_encode(detector_status),
+        url_encode(indoor_co2)
+    )
+    print(url)
+    try:
+        req = urequests.request(method='GET', url=url, headers={'Content-Type':'text/html'})
+        response_status = req.status_code
+        response_text = req.text
+    except Exception as e:
+        lcd.print('not ok', 0, 0, 0xffffff)  # type: ignore
+        error_message = str(e)
+        print("Error:", error_message)
+        lcd.print(error_message, 0, 20, 0xffffff)  # type: ignore
+
+def get_values(url):
+    url = '{}{}'.format(backend_url, url)
+    try:
+        response = urequests.get(url)
+        if response.status_code == 200:
+            outdoor = response.json()
+            return outdoor
+        else:
+            return None
+    except Exception as e:
+        return None
+        
+        
+def display_weather_icon():
+    forecast = get_values('forecast')
+    current_weather = forecast['list'][0]
+    url = 'get_icon/{}'.format(current_weather["weather"][0]["icon"])
+    icon_url = get_values(url)
+    return icon_url
+  
+
+screen = M5Screen()  # type: ignore
+screen.clean_screen()
+screen.set_screen_bg_color(0xADD8E6)
+connect_to_wifi()
+env3_0 = unit.get(unit.ENV3, (32,33))
+tvoc_0 = unit.get(unit.TVOC, (14,13))
+
+
+label_title_outdoor = M5Label('Outdoor:', x=20, y=20, color=0x000000, font=FONT_MONT_18, parent=None)  # type: ignore
+label_outdoor_humidity = M5Label('Humidity: ', x=20, y=50, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_outdoor_temp = M5Label('Temp: ', x=20, y=70, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_outdoor_weather = M5Label('Weather: ', x=20, y=90, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_outdoor_windspeed = M5Label('Windspeed: ', x=20, y=110, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+
+label_title_indoor = M5Label('Indoor:', x=20, y=140, color=0x000000, font=FONT_MONT_18, parent=None)  # type: ignore
+label_indoor_humidity = M5Label('Humidity: ', x=20, y=170, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_indoor_temp = M5Label('Temp: ', x=20, y=190, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_indoor_co2 = M5Label('CO2: ', x=20, y=210, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+
+label_date = M5Label('Date: ', x=200, y=20, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+label_time = M5Label('Time: ', x=200, y=50, color=0x000000, font=FONT_MONT_14, parent=None)  # type: ignore
+
+#image0 = M5Img("res/loading.png", x=195, y=110, parent=None)
+count = 0
+
+while running:
+    indoor_temp = env3_0.temperature
+    indoor_humidity = env3_0.humidity
+    indoor_co2 = tvoc_0.eCO2
+
+
+    date = get_values('date')
+    time = get_values('time')
+    detector_status = False
+    outdoor_temp = get_values('outdoor_temp')
+    outdoor_humidity = get_values('outdoor_humidity')
+    outdoor_weather = str(get_values('outdoor_weather'))
+    outdoor_windspeed = get_values('outdoor_windspeed')
+    
+    post_data(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_weather, outdoor_windspeed, detector_status, indoor_co2)
+    
+    label_outdoor_humidity.set_text('Humidity: ' + str(outdoor_humidity) + ' %')
+    label_outdoor_temp.set_text('Temp: ' + str(outdoor_temp) + ' °C')
+    label_outdoor_weather.set_text('Weather: ' + outdoor_weather)
+    label_outdoor_windspeed.set_text('Windspeed: ' + str(outdoor_windspeed) + ' km/h')
+
+    label_indoor_humidity.set_text('Humidity: ' + str(indoor_humidity) + ' %')
+    label_indoor_temp.set_text('Temp: ' + str(indoor_temp)+ ' °C')
+    label_indoor_co2.set_text('CO2: ' + str(indoor_co2))
+
+    label_date.set_text('Date: ' + date)
+    label_time.set_text('Time: ' + time)
+    
+    #image0.set_img_src("res/{}".format(display_weather_icon()[-10:]))
+    
+    if count == 0:
+        count = count + 1
+        url = 'Good evening, it is {} and is the weather is {}. The outside temperature is {}'.format(time, outdoor_weather, outdoor_temp)
+        speaker.playCloudWAV('http://192.168.50.203:8080/text_to_speech/{}'.format(urllib.parse.quote(url)), volume=5)  # type: ignore
+    
+    if indoor_co2 > 1200:
+        screen.clean_screen()
+        screen.set_screen_bg_color(0xff0000)
+        label_co2 = M5Label('CO2 ALERT !', x=100, y=100, color=0x000000, font=FONT_MONT_18, parent=None)  # type: ignore
+        utime.sleep(60)
+    else:
+        utime.sleep(120)
+
+lcd.print('Ended.', 0, 80, 0xff0000)  # type: ignore
