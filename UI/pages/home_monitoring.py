@@ -18,7 +18,10 @@ def get_data_from_flask(url_path):
     response = requests.get(URL)
     return response.json()
 
-last_record = get_data_from_flask('last_record')
+if 'last_record' not in st.session_state:
+    st.session_state['last_record'] = get_data_from_flask('last_record')
+
+last_record = st.session_state['last_record']
 
 string_data = last_record['data']
 data = json.loads(string_data)

@@ -42,6 +42,9 @@ if 'last_record' not in st.session_state:
 if 'forecast' not in st.session_state:
     st.session_state['forecast'] = get_data_from_flask('forecast')
 
+if 'last_record' not in st.session_state:
+    st.session_state['last_record'] = get_data_from_flask('last_record')
+
 st.markdown("***")
 
 
