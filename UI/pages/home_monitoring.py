@@ -73,3 +73,29 @@ st.markdown("""
 
 st.markdown("***")
 st.write("Data provided by indoor monitoring system.")
+
+
+# FOOTER
+
+col1, col2, col3 = st.columns([1, 1, 1])
+
+with col1:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button('View Historical Data'):
+        st.switch_page('pages/historical_data.py') 
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button('View Forecast'):
+        st.switch_page('pages/weather_forecast.py')
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button('Home Monitoring'):
+        st.switch_page('pages/home_monitoring.py')
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("***")
+st.markdown("<div style='text-align: center;'>For more information, visit our <a href='https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024'>GitHub repository</a>.</div>", unsafe_allow_html=True)
