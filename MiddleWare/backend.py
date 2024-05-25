@@ -5,7 +5,6 @@ from google.cloud.exceptions import GoogleCloudError
 import requests
 from dotenv import load_dotenv
 from google.cloud import texttospeech
-import urllib.parse
 
 load_dotenv()
 
@@ -203,8 +202,6 @@ def text_to_speech(text2):
         input=synthesis_input, voice=voice, audio_config=audio_config
     )
     return response.audio_content
-
-
 
 
 if __name__ == '__main__':
