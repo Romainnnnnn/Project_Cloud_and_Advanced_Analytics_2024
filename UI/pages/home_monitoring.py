@@ -89,7 +89,7 @@ with col2:
 # Display the indoor CO2 levels metric
 with col3:
     st.header("Indoor CO2 Levels")
-    st.image("https://cdn1.vectorstock.com/i/1000x1000/88/50/co2-cloud-carbon-pollution-icon-vector-22288850.jpg", width=70)
+    st.image("https://png.pngtree.com/png-vector/20220526/ourmid/pngtree-co2-carbon-dioxide-logo-vector-design-png-image_4724125.png", width=70)
     st.metric(label="CO2 (ppm)", value=f"{indoor_co2} ppm")
     if indoor_co2 > 1000:
         st.warning("High CO2 levels detected!")
