@@ -19,7 +19,7 @@ def get_data_from_flask(url_path):
     """
     Get data from the Flask backend server.
     """
-    URL = "https://backendproject-q7qdvoyxja-oa.a.run.app/" + url_path
+    URL = "YOUR BACKEND URL" + url_path
     response = requests.get(URL)
     return response.json()
 
