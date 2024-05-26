@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from google.cloud import bigquery
 import os
 from google.cloud.exceptions import GoogleCloudError
@@ -6,6 +6,10 @@ import requests
 from dotenv import load_dotenv
 from google.cloud import texttospeech
 from openai import OpenAI
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+
+
 
 load_dotenv()
 
@@ -260,6 +264,20 @@ def last_detection():
             "status": "error",
             "message": str(e)
         }), 500
+
+
+
+@app.route('/get_image')
+def get_image():
+    img = Image.new('RGB', (100, 30), color=(73, 109, 137))
+    d = ImageDraw.Draw(img)
+    d.text((10, 10), "Hello World", fill=(255, 255, 0))
+
+    img_io = BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/png')
 
 
 if __name__ == '__main__':
