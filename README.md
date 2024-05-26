@@ -11,7 +11,7 @@ This project aims to monitor indoor temperature, humidity, and CO2 levels using 
 - **Alerts:** Set thresholds for each parameter to trigger alerts when values go out of the desired range.
 - **Presence Detector:** When presence is detected the M5Stack speakers play information about today's weather using Google Text-2-Speech API
 - **Forecast:** Weather forecast available on the streamlit dashboard app.
-- **Historical Data Analysis:** Diplay of historical data on the streamlit dashboard app
+- **Historical Data Analysis:** Display of historical data on the streamlit dashboard app
 
 ### Requirements
 - M5Stack Core2 IoT device
