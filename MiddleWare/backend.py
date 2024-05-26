@@ -17,7 +17,7 @@ PROJECT_NAME = os.getenv('PROJECT_NAME')
 key_path = os.getenv('KEY_PATH')
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
 
-CHAT_GPT_API_KEY = 'sk-proj-eRS6U2UPpxAp9JwojPRRT3BlbkFJ8eYMfqQ51liBUnU9BIDS'
+CHAT_GPT_API_KEY = os.getenv('OPENAI_API_KEY')
 
 client = bigquery.Client(project=PROJECT_NAME)
 client_2 = texttospeech.TextToSpeechClient()
