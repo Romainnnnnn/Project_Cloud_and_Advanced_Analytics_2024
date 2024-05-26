@@ -10,11 +10,11 @@ import ure
 import urllib.parse
 import time
 
-WIFI_SSID = 'Yes'
-WIFI_PASSWORD = '123456789'
+WIFI_SSID = 'WIFI_SSID'
+WIFI_PASSWORD = 'WIFI_PASSWORD'
 
 running = True
-backend_url = 'https://backendproject-q7qdvoyxja-oa.a.run.app/'
+backend_url = 'backend_url'
 
 def connect_to_wifi():
     wlan = network.WLAN(network.STA_IF)
@@ -25,9 +25,14 @@ def connect_to_wifi():
     while not wlan.isconnected():
         pass
     
-    lcd.print('\b WiFi connected:', 0, 80, 0xff0000)
+    lcd.print('WiFi connected', 0, 80, 0xff0000)
     screen.clean_screen()
     screen.set_screen_bg_color(0xADD8E6)
+
+def ensure_wifi_connected():
+    wlan = network.WLAN(network.STA_IF)
+    if not wlan.isconnected():
+        connect_to_wifi()
 
 def url_encode(value):
     return ure.sub(r'[^A-Za-z0-9]', lambda x: '%%%02X' % ord(x.group(0)), str(value))
@@ -53,7 +58,7 @@ def post_data(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_hu
         response_status = req.status_code
         response_text = req.text
     except Exception as e:
-        lcd.print('not ok', 0, 0, 0xffffff)
+        lcd.print('Error in posting data', 0, 0, 0xffffff)
         error_message = str(e)
         print("Error:", error_message)
         lcd.print(error_message, 0, 20, 0xffffff)
@@ -72,10 +77,12 @@ def get_values(url):
 
 def display_weather_icon():
     forecast = get_values('forecast')
-    current_weather = forecast['list'][0]
-    url = 'get_icon/{}'.format(current_weather["weather"][0]["icon"])
-    icon_url = get_values(url)
-    return icon_url
+    if forecast:
+        current_weather = forecast['list'][0]
+        url = 'get_icon/{}'.format(current_weather["weather"][0]["icon"])
+        icon_url = get_values(url)
+        return icon_url
+    return None
 
 def show_forecast():
     forecast = get_values('forecast')
@@ -115,7 +122,6 @@ label_time = M5Label('Time: ', x=200, y=50, color=0x000000, font=FONT_MONT_14, p
 battery_state = None
 
 # Some issues with the images 
-
 # image0 = M5Img("res/default.png", x=195, y=110, parent=None)
 count = 0
 last_detect_time = 0
@@ -126,6 +132,8 @@ forecast_button = M5Button(text='Forecast', x=270, y=200, w=80, h=40, bg_c=0x00B
 forecast_button.set_on_click(show_forecast)
 
 while running:
+    ensure_wifi_connected()
+    
     indoor_temp = env3_0.temperature
     indoor_humidity = env3_0.humidity
     indoor_co2 = tvoc_0.eCO2
