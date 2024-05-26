@@ -56,6 +56,13 @@ The local streamlit app will guide you through the final configuration steps.
 - Better error handling in case of lost connection
 
 
+### Streamlit Dashboard
+You can see the dashboard [here](https://homemonitoring-q7qdvoyxja-oa.a.run.app)
+
+### Youtube video
+You can see a youtube video showcasing the project [here]()
+
+### Contributors
 
 
 
