@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import time
 from st_pages import Page, show_pages, add_page_title
 
 # Page configuration
@@ -16,6 +17,25 @@ st.set_page_config(
     }
 )
 
+def get_data_from_flask(url_path):
+    """
+    Get data from the Flask backend server.
+    """
+    URL = "https://backendproject-q7qdvoyxja-oa.a.run.app/" + url_path
+    response = requests.get(URL)
+    return response.json()
+
+def display_current_time():
+    """
+    Display the current date and time in the Streamlit app.
+    """
+    st.markdown("<h2 style='text-align: center;'>Current Time</h2>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        now = datetime.now()
+        current_time = now.strftime("%A, %-d of %B")
+        st.markdown(f"<div style='text-align: center; font-size: 24px;'>{current_time}</div>", unsafe_allow_html=True)
+
 show_pages(
     [
         Page("streamlit_app.py", "Welcome", "🏠"),
@@ -24,11 +44,6 @@ show_pages(
         Page("pages/weather_forecast.py", "Forecast", "🌤️"),
     ]
 )
-# Function to get data from Flask
-def get_data_from_flask(url_path):
-    URL = "https://backendproject-q7qdvoyxja-oa.a.run.app/" + url_path
-    response = requests.get(URL)
-    return response.json()
 
 # Centered title and welcome message
 st.markdown("<h1 style='text-align: center;'>Welcome to Home Monitoring App</h1>", unsafe_allow_html=True)
@@ -44,6 +59,9 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
+# Display current time
+display_current_time()
+
 # Load data into session state
 if 'last_record' not in st.session_state:
     st.session_state['last_record'] = get_data_from_flask('last_record')
@@ -56,27 +74,46 @@ if 'last_record' not in st.session_state:
 
 st.markdown("***")
 
-
-# FOOTER
+# Footer with improved buttons
+st.markdown("""
+    <style>
+    .nav-button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        color: white;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .nav-button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Historical Data  🌎'):
-        st.switch_page('pages/historical_data.py') 
+    if st.button('View Historical Data  🌎', key='btn1'):
+        st.experimental_set_query_params(page='historical_data')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Forecast  🌤️'):
-        st.switch_page('pages/weather_forecast.py')
+    if st.button('View Forecast  🌤️', key='btn2'):
+        st.experimental_set_query_params(page='weather_forecast')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('Home Monitoring  🏠'):
-        st.switch_page('pages/home_monitoring.py')
+    if st.button('Home Monitoring  🏠', key='btn3'):
+        st.experimental_set_query_params(page='home_monitoring')
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("***")
