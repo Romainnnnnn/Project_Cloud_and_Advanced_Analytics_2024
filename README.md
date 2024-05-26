@@ -9,7 +9,7 @@ This project aims to monitor indoor temperature, humidity, and CO2 levels using 
 - **Data Display:** Shows the sensor data on the M5Stack Core2's touchscreen display and on a streamlit dashboard app
 - **Data Storing:** Stores the data onto a google cloud database
 - **Alerts:** Set thresholds for each parameter to trigger alerts when values go out of the desired range.
-- **Presence Detector:** When presence is detected the M5Stack speakers play information about today's weather
+- **Presence Detector:** When presence is detected the M5Stack speakers play information about today's weather using Google Text-2-Speech API
 - **Forecast:** Weather forecast available on the streamlit dashboard app.
 - **Historical Data Analysis:** Diplay of historical data on the streamlit dashboard app
 
@@ -48,6 +48,14 @@ cd Tutorial
 ```
 streamlit run tuto.py
 ```
+The local streamlit app will guide you through the final configuration steps.
+
+### Further Implementations
+- Forecast available on the m5 Stack device
+- Using OpenAI to generate text for the Google Text-2-Speech API
+- Better error handling in case of lost connection
+
+
 
 
 
