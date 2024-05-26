@@ -17,7 +17,7 @@ CHAT_GPT_API_KEY = 'sk-proj-eRS6U2UPpxAp9JwojPRRT3BlbkFJ8eYMfqQ51liBUnU9BIDS'
 
 client = bigquery.Client(project=PROJECT_NAME)
 client_2 = texttospeech.TextToSpeechClient()
-client_OpenAI = OpenAI(api_key = CHAT_GPT_API_KEY)
+client_OpenAI = OpenAI(api_key=CHAT_GPT_API_KEY)
 API_KEY = os.getenv('API_KEY')
 LOCATION = os.getenv('LOCATION')  # 'Lausanne,CH'
 
@@ -52,6 +52,7 @@ def index():
         <li>/date</li>
         <li>/all_records</li>
         <li>/text_to_speech</li>
+         <li>/last_detection</li>
     </ul>
     '''
     return endpoints
@@ -63,8 +64,7 @@ def index():
 def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed,
          detector_status, indoor_co2, battery_state):
     try:
-        print("Received data")
-        # Convert data types as needed
+        # print("Received data")
         indoor_temp = float(indoor_temp)
         indoor_humidity = float(indoor_humidity)
         outdoor_temp = float(outdoor_temp)
@@ -98,7 +98,7 @@ def forecast():
 
 @app.route('/outdoor_temp')
 def outdoor_temp():
-    print("got request")
+    # print("got request")
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_temp = current_weather['main']['temp']
@@ -107,7 +107,7 @@ def outdoor_temp():
 
 @app.route('/outdoor_humidity')
 def outdoor_humidity():
-    print("got request")
+    # print("got request")
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_humidity = current_weather['main']['humidity']
@@ -116,7 +116,7 @@ def outdoor_humidity():
 
 @app.route('/outdoor_windspeed')
 def outdoor_windspeed():
-    print("got request")
+    # print("got request")
     forecast_data = get_weather_forecast(API_KEY, LOCATION)
     current_weather = forecast_data['list'][0]
     current_wind_speed = current_weather['wind']['speed']
@@ -137,7 +137,7 @@ def get_icon(forecast):
     base_url = "https://openweathermap.org/img/wn"
     icon_url = f"{forecast}"
     end_url = '@2x.png'
-    print(f"{base_url}/{icon_url}{end_url}")
+    # print(f"{base_url}/{icon_url}{end_url}")
     return jsonify(f"{base_url}/{icon_url}{end_url}")
 
 
@@ -232,6 +232,34 @@ def get_text():
         ]
     )
     return jsonify(response.choices[0].message.content)
+
+
+@app.route('/last_detection')
+def last_detection():
+    try:
+        query = f"""
+                SELECT date, time
+                FROM `{PROJECT_NAME}.WheatherData.weather-records`
+                WHERE detector_status = '1'
+                ORDER BY date DESC, time DESC
+                LIMIT 1;
+                """
+        query_job = client.query(query)
+        results = query_job.to_dataframe()
+        return jsonify({
+            "status": "success",
+            "data": results.to_json()
+        }), 200
+    except GoogleCloudError as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 
 if __name__ == '__main__':
