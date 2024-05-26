@@ -64,6 +64,8 @@ You can see a youtube video showcasing the project [here]()
 
 ### Contributors
 
+- **Romain Hovius:** Backend, m5stack code
+- **Youssouf Chaïb:** UI, m5stack code
 
 
 
