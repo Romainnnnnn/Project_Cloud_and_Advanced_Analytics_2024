@@ -19,6 +19,12 @@ st.set_page_config(
 def get_data_from_flask(url_path):
     """
     Get data from the Flask backend server.
+    
+    Parameters:
+    url_path (str): The path to the endpoint on the Flask server.
+    
+    Returns:
+    dict: The JSON response from the Flask server.
     """
     URL = "https://backendproject-q7qdvoyxja-oa.a.run.app/" + url_path
     response = requests.get(URL)
@@ -27,6 +33,7 @@ def get_data_from_flask(url_path):
 def display_current_time():
     """
     Display the current date and time in the Streamlit app.
+    This function continuously updates the time every second.
     """
     st.markdown("<h2 style='text-align: center;'>Current Time</h2>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -37,6 +44,7 @@ def display_current_time():
             st.markdown(f"<div style='text-align: center; font-size: 24px;'>{current_time}</div>", unsafe_allow_html=True)
             time.sleep(1)
 
+# Page navigation setup
 show_pages(
     [
         Page("streamlit_app.py", "Welcome", "🏠"),
