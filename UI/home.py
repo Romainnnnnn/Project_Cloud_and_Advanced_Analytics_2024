@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 from st_pages import Page, show_pages, add_page_title
 
@@ -32,7 +32,7 @@ def display_current_time():
     with col2:
         placeholder = st.empty()
         while True:
-            now = datetime.now()
+            now = datetime.utcnow() + timedelta(hours=2)
             current_time = now.strftime("%A, %-d of %B, %H:%M:%S")
             placeholder.markdown(f"<div style='text-align: center; font-size: 24px;'>{current_time}</div>", unsafe_allow_html=True)
             time.sleep(1)

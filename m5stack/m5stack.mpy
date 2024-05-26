@@ -11,11 +11,11 @@ import urllib.parse
 
 
 
-WIFI_SSID = 'Yes'
-WIFI_PASSWORD = '123456789'
+WIFI_SSID = 'YOUR WIFI SSID'
+WIFI_PASSWORD = 'YOUR WIFI PASSWORD'
 
 running = True
-backend_url = 'http://192.168.50.203:8080/'
+backend_url = 'YOUR'
 
 def connect_to_wifi():
     wlan = network.WLAN(network.STA_IF)
