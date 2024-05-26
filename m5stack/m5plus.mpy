@@ -188,4 +188,4 @@ while running:
 
     detect_motion()
 
-lcd.print('Ended.', 0, 80, 0xff0000)  # type: ignore
+
