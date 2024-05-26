@@ -136,29 +136,47 @@ col1, col2, col3 = st.columns([1, 7, 1])
 with col2:
     st.dataframe(df)
 
-# FOOTER with improved buttons for navigation
+# Footer with improved buttons
+st.markdown("""
+    <style>
+    .nav-button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        color: white;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .nav-button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Historical Data'):
-        st.switch_page('pages/historical_data.py') 
+    if st.button('View Historical Data  🌎', key='btn1'):
+        st.switch_page('pages/historical_data.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Forecast'):
+    if st.button('View Forecast  🌤️', key='btn2'):
         st.switch_page('pages/weather_forecast.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('Home Monitoring'):
+    if st.button('Home Monitoring  🏠', key='btn3'):
         st.switch_page('pages/home_monitoring.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Separator
 st.markdown("***")
-
-# Link to GitHub repository
 st.markdown("<div style='text-align: center;'>For more information, visit our <a href='https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024'>GitHub repository</a>.</div>", unsafe_allow_html=True)

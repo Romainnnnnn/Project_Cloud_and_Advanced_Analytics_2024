@@ -1,8 +1,6 @@
 import streamlit as st
 import requests
 from datetime import datetime
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import time
 from st_pages import Page, show_pages, add_page_title
 
@@ -32,13 +30,16 @@ def display_current_time():
     st.markdown("<h2 style='text-align: center;'>Current Time</h2>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        now = datetime.now()
-        current_time = now.strftime("%A, %-d of %B")
-        st.markdown(f"<div style='text-align: center; font-size: 24px;'>{current_time}</div>", unsafe_allow_html=True)
+        placeholder = st.empty()
+        while True:
+            now = datetime.now()
+            current_time = now.strftime("%A, %-d of %B, %H:%M:%S")
+            placeholder.markdown(f"<div style='text-align: center; font-size: 24px;'>{current_time}</div>", unsafe_allow_html=True)
+            time.sleep(1)
 
 show_pages(
     [
-        Page("streamlit_app.py", "Welcome", "🏠"),
+        Page("home.py", "Welcome", "🏠"),
         Page("pages/home_monitoring.py", "Home Monitoring", "🏠"),
         Page("pages/historical_data.py", "Historical Data", "🌎"),
         Page("pages/weather_forecast.py", "Forecast", "🌤️"),
@@ -69,9 +70,6 @@ if 'last_record' not in st.session_state:
 if 'forecast' not in st.session_state:
     st.session_state['forecast'] = get_data_from_flask('forecast')
 
-if 'last_record' not in st.session_state:
-    st.session_state['last_record'] = get_data_from_flask('last_record')
-
 st.markdown("***")
 
 # Footer with improved buttons
@@ -101,19 +99,19 @@ col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.button('View Historical Data  🌎', key='btn1'):
-        st.experimental_set_query_params(page='historical_data')
+        st.switch_page('pages/historical_data.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.button('View Forecast  🌤️', key='btn2'):
-        st.experimental_set_query_params(page='weather_forecast')
+        st.switch_page('pages/weather_forecast.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.button('Home Monitoring  🏠', key='btn3'):
-        st.experimental_set_query_params(page='home_monitoring')
+        st.switch_page('pages/home_monitoring.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("***")

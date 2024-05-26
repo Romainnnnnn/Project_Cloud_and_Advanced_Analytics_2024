@@ -8,7 +8,6 @@ st.set_page_config(
     page_title="Home Monitoring",
     page_icon="🏠",
     layout="wide",
-    initial_sidebar_state="collapsed",
     menu_items={
         'About': "[GitHub](https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024)"
     }
@@ -57,7 +56,17 @@ st.title("Indoor Conditions Monitoring")
 st.markdown("***")
 
 # Display the time and date of the last record
-st.write(f"**Recorded at:** {time} on {date}")
+col1, col2, col3 = st.columns([1, 2, 1])
+with col1:
+    st.write(f"**Recorded at:** {time} on {date}")
+
+with col3:
+    last_detection = get_data_from_flask('last_detection')
+    data = json.loads(last_detection['data'])
+    date_timestamp = data['date']['0']
+    date = datetime.fromtimestamp(date_timestamp / 1000).strftime('%Y-%m-%d')
+    time = data['time']['0']
+    st.write(f"**Last Detection:** {date} at {time}")
 
 # Separator
 st.markdown("***")
@@ -82,6 +91,12 @@ with col3:
     st.header("Indoor CO2 Levels")
     st.image("https://icons.veryicon.com/png/o/education-technology/agricultural-facilities/co2.png", width=70)
     st.metric(label="CO2 (ppm)", value=f"{indoor_co2} ppm")
+    if indoor_co2 > 1000:
+        st.warning("High CO2 levels detected!")
+        if st.button("Open Windows", key='open_windows'):
+            st.write("Implementation of connected windows..")
+        
+
 
 # Add custom CSS for styling the metrics
 st.markdown("""
@@ -103,32 +118,47 @@ st.markdown("***")
 # Additional information about the data
 st.write("Data provided by indoor monitoring system.")
 
-# FOOTER with navigation buttons
+# Footer with improved buttons
+st.markdown("""
+    <style>
+    .nav-button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        color: white;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .nav-button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 col1, col2, col3 = st.columns([1, 1, 1])
 
-# Button to navigate to the Historical Data page
 with col1:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Historical Data'):
-        st.switch_page('pages/historical_data.py') 
+    if st.button('View Historical Data  🌎', key='btn1'):
+        st.switch_page('pages/historical_data.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Button to navigate to the Forecast page
 with col2:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('View Forecast'):
+    if st.button('View Forecast  🌤️', key='btn2'):
         st.switch_page('pages/weather_forecast.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Button to refresh the Home Monitoring page
 with col3:
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button('Home Monitoring'):
+    if st.button('Home Monitoring  🏠', key='btn3'):
         st.switch_page('pages/home_monitoring.py')
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Separator
 st.markdown("***")
-
-# Link to the GitHub repository for more information
 st.markdown("<div style='text-align: center;'>For more information, visit our <a href='https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024'>GitHub repository</a>.</div>", unsafe_allow_html=True)
