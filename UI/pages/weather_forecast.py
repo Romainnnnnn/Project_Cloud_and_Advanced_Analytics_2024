@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 def get_data_from_flask(url_path):
-    URL = "http://127.0.0.1:8080/" + url_path
+    URL = "https://backendproject-q7qdvoyxja-oa.a.run.app/" + url_path
     response = requests.get(URL)
     return response.json()
 
