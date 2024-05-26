@@ -56,6 +56,7 @@ The local streamlit app will guide you through the final configuration steps.
 - Better error handling in case of lost connection
 - Image of weather forecast from backend instead of localy
 - Adding battery info on the streamlit dashboard app
+- Make the M5 device launch faster
 
 
 ### Streamlit Dashboard
