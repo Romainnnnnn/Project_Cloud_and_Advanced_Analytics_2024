@@ -89,7 +89,7 @@ def show_forecast():
     screen.clean_screen()
     screen.set_screen_bg_color(0xADD8E6)
     if forecast:
-        for i in range(1, 6):  # Displaying the forecast for the next 5 days
+        for i in range(1, 6):
             day_forecast = forecast['list'][i]
             date_label = M5Label('Date: {}'.format(day_forecast['dt_txt']), x=20, y=30 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
             temp_label = M5Label('Temp: {} °C'.format(day_forecast['main']['temp']), x=20, y=50 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
