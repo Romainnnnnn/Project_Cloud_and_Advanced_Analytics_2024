@@ -10,11 +10,11 @@ import ure
 import urllib.parse
 import time
 
-WIFI_SSID = 'WIFI_SSID'
-WIFI_PASSWORD = 'WIFI_PASSWORD'
+WIFI_SSID = ''
+WIFI_PASSWORD = ''
 
 running = True
-backend_url = 'backend_url'
+backend_url = ''
 
 def connect_to_wifi():
     wlan = network.WLAN(network.STA_IF)
@@ -89,7 +89,7 @@ def show_forecast():
     screen.clean_screen()
     screen.set_screen_bg_color(0xADD8E6)
     if forecast:
-        for i in range(1, 6):
+        for i in range(1, 6):  # Displaying the forecast for the next 5 days
             day_forecast = forecast['list'][i]
             date_label = M5Label('Date: {}'.format(day_forecast['dt_txt']), x=20, y=30 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
             temp_label = M5Label('Temp: {} °C'.format(day_forecast['main']['temp']), x=20, y=50 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
@@ -128,9 +128,6 @@ last_detect_time = 0
 last_speak_time = 0
 speaker_variable = 0
 
-forecast_button = M5Button(text='Forecast', x=270, y=200, w=80, h=40, bg_c=0x00BFFF, text_c=0xFFFFFF, font=FONT_MONT_14, parent=None)
-forecast_button.set_on_click(show_forecast)
-
 while running:
     ensure_wifi_connected()
     
@@ -161,11 +158,13 @@ while running:
     label_date.set_text('Date: ' + date)
     label_time.set_text('Time: ' + time)
     
-    image0.set_img_src("res/{}".format(display_weather_icon()[-10:]))
+    # image0.set_img_src("res/{}".format(display_weather_icon()[-10:]))
     
     if detector_status == 1:
         last_detect_time = time
-
+    
+    # OpenAI impletation for the text (no time :( )
+    
     if count == 0 or speaker_variable == 30:  # or (last_detect_time - last_speak_time > 3600):
         count = count + 1
         if 'rain' in outdoor_weather.lower():
