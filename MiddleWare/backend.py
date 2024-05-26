@@ -17,7 +17,7 @@ CHAT_GPT_API_KEY = 'sk-proj-eRS6U2UPpxAp9JwojPRRT3BlbkFJ8eYMfqQ51liBUnU9BIDS'
 
 client = bigquery.Client(project=PROJECT_NAME)
 client_2 = texttospeech.TextToSpeechClient()
-client_OpenAI = OpenAI()
+client_OpenAI = OpenAI(api_key = CHAT_GPT_API_KEY)
 API_KEY = os.getenv('API_KEY')
 LOCATION = os.getenv('LOCATION')  # 'Lausanne,CH'
 
@@ -59,9 +59,9 @@ def index():
 
 @app.route(
     '/post/<date>/<time>/<indoor_temp>/<indoor_humidity>/<outdoor_temp>/<outdoor_humidity>/<outdoor_wheather'
-    '>/<outdoor_windspeed>/<detector_status>/<indoor_co2>')
+    '>/<outdoor_windspeed>/<detector_status>/<indoor_co2>/<battery_state>')
 def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed,
-         detector_status, indoor_co2):
+         detector_status, indoor_co2, battery_state):
     try:
         print("Received data")
         # Convert data types as needed
@@ -71,11 +71,12 @@ def post(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidit
         outdoor_humidity = float(outdoor_humidity)
         outdoor_windspeed = float(outdoor_windspeed)
         indoor_co2 = float(indoor_co2)
+        battery_state = float(battery_state)
 
         query = f"""
             INSERT INTO `{PROJECT_NAME}.WheatherData.weather-records` 
-            (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2)
-            VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed}, '{detector_status}', {indoor_co2})
+            (date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_wheather, outdoor_windspeed, detector_status, indoor_co2, battery_state)
+            VALUES('{date}', '{time}', {indoor_temp}, {indoor_humidity}, {outdoor_temp}, {outdoor_humidity}, '{outdoor_wheather}', {outdoor_windspeed}, '{detector_status}', {indoor_co2}, {battery_state})
         """
         query_job = client.query(query)
         query_job.result()
