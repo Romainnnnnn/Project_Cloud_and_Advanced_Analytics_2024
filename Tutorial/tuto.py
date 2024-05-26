@@ -28,12 +28,12 @@ def main():
     st.write("Please specify the deployment location. This will help configure regional settings.")
     location = st.text_input("Enter Location", key='LOCATION')
 
-    st.write("##### Variable 5")
-    st.write("Additional configuration settings can be specified here.")
-    var5 = st.text_input("Enter Variable 5", key='VAR5')
+    st.write("##### OpenAI API Key")
+    st.write("Please enter your OpenWeatherMap API key. This is required for authentication with external services.")
+    openai_api_key = st.text_input("OpenAI API KEY", key='OPENAI_API_KEY')
 
-    var_names = ['API_KEY', 'PROJECT_NAME', 'KEY_PATH', 'LOCATION', 'VAR5']
-    var_values = [api_key, project_name, key_path, location, var5]
+    var_names = ['API_KEY', 'PROJECT_NAME', 'KEY_PATH', 'LOCATION', 'OPENAI_API_KEY']
+    var_values = [api_key, project_name, key_path, location, openai_api_key]
 
     # Save button
     if st.button('Save to .env'):
@@ -42,7 +42,7 @@ def main():
         st.write('##### Copy the .env file to the backend folder to use the updated configuration.')
 
     if st.button('Next Page'):
-        st.switch_page('pages/uiflow.py')
+        st.switch_page('pages/docker_deployment.py')
 
 if __name__ == "__main__":
     main()
