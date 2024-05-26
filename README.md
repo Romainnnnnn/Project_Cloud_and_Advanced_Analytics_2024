@@ -6,6 +6,21 @@ This project aims to monitor indoor temperature, humidity, and CO2 levels using 
 
 ### Features
 - **Real-time Monitoring:** Continuously measures temperature, humidity, and CO2 levels.
-- **Data Display:** Shows the sensor data on the M5Stack Core2's touchscreen display and on a streamlit dashboard
+- **Data Display:** Shows the sensor data on the M5Stack Core2's touchscreen display and on a streamlit dashboard app
 - **Data Storing:** Stores the data onto a google cloud database
 - **Alerts:** Set thresholds for each parameter to trigger alerts when values go out of the desired range.
+- **Presence Detector:** When presence is detected the M5Stack speakers play information about today's weather
+- **Forecast:** Weather forecast available on the streamlit dashboard app.
+- **Historical Data Analysis:** Diplay of historical data on the streamlit dashboard app
+
+### Requirements
+- M5Stack Core2 IoT device
+- Humidity sensor
+- Temperature sensor
+- CO2 sensor
+
+### SetUp Instructions
+Open a terminal window
+```
+git clone https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024/
+```
