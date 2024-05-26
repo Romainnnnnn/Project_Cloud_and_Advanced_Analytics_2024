@@ -54,6 +54,7 @@ The local streamlit app will guide you through the final configuration steps.
 - Forecast available on the m5 Stack device
 - Using OpenAI to generate text for the Google Text-2-Speech API
 - Better error handling in case of lost connection
+- Image of weather forecast from backend instead of localy
 
 
 ### Streamlit Dashboard
