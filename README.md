@@ -55,6 +55,7 @@ The local streamlit app will guide you through the final configuration steps.
 - Using OpenAI to generate text for the Google Text-2-Speech API
 - Better error handling in case of lost connection
 - Image of weather forecast from backend instead of localy
+- Adding battery info on the streamlit dashboard app
 
 
 ### Streamlit Dashboard
