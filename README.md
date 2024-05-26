@@ -20,7 +20,19 @@ This project aims to monitor indoor temperature, humidity, and CO2 levels using 
 - CO2 sensor
 
 ### SetUp Instructions
-Open a terminal window
+Open a terminal window and run the following command
 ```
 git clone https://github.com/Romainnnnnn/Project_Cloud_and_Advanced_Analytics_2024/
 ```
+Navigate to the project directory:
+```
+cd Project_Cloud_and_Advanced_Analytics_2024
+```
+Set Up a Python Virtual Environment:
+```
+python -m venv venv
+```
+Activate the virtual environment:
+- On windows ```venv\Scripts\activate```
+- On MacOs and Linux ```source venv/bin/activate```
+
