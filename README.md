@@ -63,7 +63,7 @@ The local streamlit app will guide you through the final configuration steps.
 You can see the dashboard [here](https://homemonitoring-q7qdvoyxja-oa.a.run.app)
 
 ### Youtube video
-You can see a youtube video showcasing the project [here]()
+You can see a youtube video showcasing the project [here](https://youtu.be/nh-TcZXSsz0)
 
 ### Contributors
 
