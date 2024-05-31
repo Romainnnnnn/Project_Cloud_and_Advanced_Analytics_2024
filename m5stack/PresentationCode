@@ -1,0 +1,240 @@
+from m5stack import *
+from m5stack_ui import *
+from uiflow import *
+import ntptime
+import urequests
+import unit
+import utime
+import network
+import ure
+import urllib.parse
+import time
+
+WIFI_SSID = 'Yes'
+WIFI_PASSWORD = '123456789'
+
+backend_url = 'https://backendproject-q7qdvoyxja-oa.a.run.app/'
+
+def connect_to_wifi():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+
+    lcd.print('Connecting to WiFi.', 0, 80, 0xff0000)
+    while not wlan.isconnected():
+        pass
+      
+    lcd.print('WiFi connected', 0, 100, 0xff0000)
+    utime.sleep(1)
+    screen.clean_screen()
+    screen.set_screen_bg_color(0xADD8E6)
+
+def ensure_wifi_connected():
+    wlan = network.WLAN(network.STA_IF)
+    if not wlan.isconnected():
+        connect_to_wifi()
+
+def url_encode(value):
+    return ure.sub(r'[^A-Za-z0-9]', lambda x: '%%%02X' % ord(x.group(0)), str(value))
+
+def post_data(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_weather, outdoor_windspeed, detector_status, indoor_co2, battery_state):
+    url = "{}post/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}".format(
+        backend_url,
+        url_encode(date),
+        url_encode(time),
+        url_encode(indoor_temp),
+        url_encode(indoor_humidity),
+        url_encode(outdoor_temp),
+        url_encode(outdoor_humidity),
+        url_encode(outdoor_weather),
+        url_encode(outdoor_windspeed),
+        url_encode(detector_status),
+        url_encode(indoor_co2),
+        url_encode(battery_state)
+    )
+    print(url)
+    try:
+        req = urequests.request(method='GET', url=url, headers={'Content-Type':'text/html'})
+        response_status = req.status_code
+        response_text = req.text
+    except Exception as e:
+        lcd.print('Error in posting data', 0, 0, 0xffffff)
+        error_message = str(e)
+        print("Error:", error_message)
+        lcd.print(error_message, 0, 20, 0xffffff)
+
+def get_values(url):
+    url = '{}{}'.format(backend_url, url)
+    try:
+        response = urequests.get(url)
+        if response.status_code == 200:
+            outdoor = response.json()
+            return outdoor
+        else:
+            return None
+    except Exception as e:
+        return None
+
+def display_weather_icon():
+    forecast = get_values('forecast')
+    if forecast:
+        current_weather = forecast['list'][0]
+        url = 'get_icon/{}'.format(current_weather["weather"][0]["icon"])
+        icon_url = get_values(url)
+        return icon_url
+    return None
+
+def show_forecast():
+    forecast = get_values('forecast')
+    screen.clean_screen()
+    screen.set_screen_bg_color(0xADD8E6)
+    if forecast:
+        for i in range(1, 6):  # Displaying the forecast for the next 5 days
+            day_forecast = forecast['list'][i]
+            date_label = M5Label('Date: {}'.format(day_forecast['dt_txt']), x=20, y=30 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
+            temp_label = M5Label('Temp: {} °C'.format(day_forecast['main']['temp']), x=20, y=50 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
+            weather_label = M5Label('Weather: {}'.format(day_forecast['weather'][0]['description']), x=20, y=70 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
+            wind_label = M5Label('Windspeed: {} km/h'.format(day_forecast['wind']['speed']), x=20, y=90 + (i - 1) * 40, color=0x000000, font=FONT_MONT_14, parent=None)
+    else:
+        error_label = M5Label('Error retrieving forecast', x=20, y=30, color=0xff0000, font=FONT_MONT_18, parent=None)
+
+screen = M5Screen()
+screen.clean_screen()
+screen.set_screen_bg_color(0xADD8E6)
+connect_to_wifi()
+env3_0 = unit.get(unit.ENV3, (32,33))
+tvoc_0 = unit.get(unit.TVOC, (14,13))
+pir_0 = unit.get(unit.PIR, unit.PORTB)
+
+label_title_outdoor = M5Label('Outdoor:', x=20, y=20, color=0x000000, font=FONT_MONT_18, parent=None)
+label_outdoor_humidity = M5Label('Humidity: ', x=20, y=50, color=0x000000, font=FONT_MONT_14, parent=None)
+label_outdoor_temp = M5Label('Temp: ', x=20, y=70, color=0x000000, font=FONT_MONT_14, parent=None)
+label_outdoor_weather = M5Label('Weather: ', x=20, y=90, color=0x000000, font=FONT_MONT_14, parent=None)
+label_outdoor_windspeed = M5Label('Windspeed: ', x=20, y=110, color=0x000000, font=FONT_MONT_14, parent=None)
+
+label_title_indoor = M5Label('Indoor:', x=20, y=140, color=0x000000, font=FONT_MONT_18, parent=None)
+label_indoor_humidity = M5Label('Humidity: ', x=20, y=170, color=0x000000, font=FONT_MONT_14, parent=None)
+label_indoor_temp = M5Label('Temp: ', x=20, y=190, color=0x000000, font=FONT_MONT_14, parent=None)
+label_indoor_co2 = M5Label('CO2: ', x=20, y=210, color=0x000000, font=FONT_MONT_14, parent=None)
+
+label_date = M5Label('Date: ', x=200, y=20, color=0x000000, font=FONT_MONT_14, parent=None)
+label_time = M5Label('Time: ', x=200, y=50, color=0x000000, font=FONT_MONT_14, parent=None)
+label_battery_state = M5Label('Battery: ', x=200, y=80, color=0x000000, font=FONT_MONT_14, parent=None)
+battery_state = None
+
+# Some issues with the images 
+image0 = M5Img("res/default.png", x=195, y=110, parent=None)
+image0.set_img_src("res/t.png")
+
+count = 0
+last_detect_time = False
+speaker_variable = 0
+last_spoke_time = 0
+shut_down = 0
+
+while True:
+    screen.set_screen_bg_color(0xADD8E6)
+    indoor_temp = env3_0.temperature
+    indoor_humidity = env3_0.humidity
+    detector_status = pir_0.state
+    indoor_co2 = tvoc_0.eCO2
+    battery_state = power.getBatPercent()
+    label_battery_state.set_text('Battery: ' +str(battery_state) + '%')
+    label_indoor_humidity.set_text('Humidity: ' + str(indoor_humidity) + ' %')
+    label_indoor_temp.set_text('Temp: ' + str(indoor_temp) + ' °C')
+    label_indoor_co2.set_text('CO2: ' + str(indoor_co2))
+  
+    ensure_wifi_connected()
+    date = get_values('date')
+    label_date.set_text('Date: ' + date)
+    time = get_values('time')
+    time = str(int(time[:2]) + 2) + time[2:]
+    label_time.set_text('Time: ' + time)
+    
+    
+    if speaker_variable == 30 or speaker_variable == 0 or detector_status == 1:
+        ensure_wifi_connected()
+        forecast = get_values('forecast')
+        current_weather = forecast['list'][0]
+        outdoor_temp = current_weather['main']['temp']
+        outdoor_humidity = current_weather['main']['humidity']
+        outdoor_weather = str(current_weather['weather'][0]['description'])
+        outdoor_windspeed = current_weather['wind']['speed']
+    
+        label_outdoor_humidity.set_text('Humidity: ' + str(outdoor_humidity) + ' %')
+        label_outdoor_temp.set_text('Temp: ' + str(outdoor_temp) + ' °C')
+        label_outdoor_weather.set_text('Weather: ' + outdoor_weather)
+        label_outdoor_windspeed.set_text('Windspeed: ' + str(outdoor_windspeed) + ' km/h')
+        image0.set_img_src("res/{}".format(current_weather["weather"][0]["icon"] + '@2x.png'))
+    
+    if detector_status == 1:
+        last_detect_time = time
+    
+    current_time = time
+    current_hour = time[:2]
+    if last_detect_time:
+        last_detect_hour = last_detect_time[:2]
+    else:
+        last_detect_time = "00:00:00"
+    # OpenAI impletation for the text (no time :( )
+    
+    
+
+    if count == 0 or (detector_status == 1 and abs(int(current_hour) - int(last_spoke_time)) > 1): 
+        current_hour = int(current_hour)
+        if current_hour < 4:
+            time_of_day = "night"
+        elif current_hour < 11:
+            time_of_day = "morning"
+        elif current_hour < 18:
+            time_of_day = "afternoon"
+        else:
+            time_of_day = "evening"
+            
+        if 'rain' in outdoor_weather.lower():
+            if outdoor_windspeed > 25:
+                message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees with high windspeed of {} km/h. It might be too windy for an umbrella.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp, outdoor_windspeed)
+            else:
+                message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees. Don\'t forget to take an umbrella.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        elif 'clear' in outdoor_weather.lower() and outdoor_temp > 30:
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees. Make sure to stay cool and hydrated.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        elif 'snow' in outdoor_weather.lower():
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees. Dress warmly and watch out for icy conditions.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        elif outdoor_temp > 35:
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is extremely high at {} degrees. Limit your exposure to the sun and drink plenty of fluids.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        elif outdoor_temp < 0:
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is below freezing at {} degrees. Make sure to bundle up to stay warm.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        elif 'fog' in outdoor_weather.lower():
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees with foggy conditions. Drive carefully and keep your lights on.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        else:
+            message = 'Good {}, it is {} and the weather is {}. The outside temperature is {} degrees.'.format(time_of_day, time[:5], outdoor_weather, outdoor_temp)
+        
+        ensure_wifi_connected()
+        speaker.playCloudWAV('{}text_to_speech/{}'.format(backend_url, urllib.parse.quote(message)), volume=4)
+        
+        speaker_variable = 0
+        count = count + 1
+        last_spoke_time = time[:2]
+
+        
+    if indoor_co2 > 1200:
+        screen.set_screen_bg_color(0xff0000)
+        # label_co2 = M5Label('CO2 ALERT !', x=100, y=100, color=0x000000, font=FONT_MONT_18, parent=None)
+        utime.sleep(10)
+        
+    if indoor_humidity < 10:
+        screen.set_screen_bg_color(0xff0000)
+        utime.sleep(10)
+        # label_co2 = M5Label('Humidity ALERT !', x=100, y=100, color=0x000000, font=FONT_MONT_18, parent=None)
+    
+    speaker_variable = speaker_variable + 1
+    ensure_wifi_connected()
+    post_data(date, time, indoor_temp, indoor_humidity, outdoor_temp, outdoor_humidity, outdoor_weather, outdoor_windspeed, detector_status, indoor_co2, battery_state)
+    shut_down = shut_down + 1
+    if shut_down == 20:
+        power.powerOff()
+    #utime.sleep(30)
+    #screen.clean_screen()
+    #show_forecast()
+    #utime.sleep(30)
+    
